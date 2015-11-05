@@ -1,0 +1,60 @@
+﻿<Application
+    x:Class="KKPageDemo.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KKPageDemo"
+    xmlns:control="using:KKPageDemo.Controls"
+    RequestedTheme="Light">
+
+    <Application.Resources>
+        <Style TargetType="control:KKPageView">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="control:KKPageView">
+                        <Canvas x:Name="RootContainer" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="control:DemoPage1">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="control:DemoPage1">
+                        <ListView ItemsSource="{Binding Items}">
+                            <ListView.Background>
+                                <SolidColorBrush Color="{Binding BackgroundColor}"/>
+                            </ListView.Background>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <TextBlock Text="{Binding}" FontSize="30" Foreground="Black"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="control:KKPageViewSeperater">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="control:KKPageViewSeperater">
+                        <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="RootContainerTranslateTransform"/>
+                            </Grid.RenderTransform>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Application.Resources>
+</Application>
