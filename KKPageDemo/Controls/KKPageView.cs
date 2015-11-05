@@ -663,6 +663,7 @@ namespace KKPageDemo.Controls
             {
                 if (SecondSeperater != null)
                 {
+                    Seperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
                     RootContainer.Children.Remove(Seperater);
                     Seperater = SecondSeperater;
                 }
