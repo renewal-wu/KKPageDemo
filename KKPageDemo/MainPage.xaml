@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="White">
+    <Grid x:Name="RootContainer" Background="White">
         <control:KKPageView x:Name="MainKKPageView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             
         </control:KKPageView>

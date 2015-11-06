@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Windows.UI;
 
 namespace KKPageDemo.ViewModels
@@ -19,6 +15,12 @@ namespace KKPageDemo.ViewModels
             {
                 Items.Add(i.ToString());
             }
+        }
+
+        ~FakeSongNameListViewModel()
+        {
+            Items.Clear();
+            Items = null;
         }
     }
 }

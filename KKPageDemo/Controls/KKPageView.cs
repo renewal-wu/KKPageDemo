@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
@@ -19,7 +18,7 @@ namespace KKPageDemo.Controls
 
         private readonly double SeperaterWidth = 20;
 
-        private readonly int PageAnimationDuration = 300;
+        private readonly int PageAnimationDuration = 100;
 
         public int FrameCounts { get; set; } = 3;
 
@@ -367,10 +366,23 @@ namespace KKPageDemo.Controls
         /// <summary>
         /// 清除目前 PageList
         /// </summary>
-        private void ClearHistory()
+        public void ClearHistory()
         {
             RootContainer.Children.Clear();
             Pages.Clear();
+
+            if (Seperater != null)
+            {
+                Seperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
+                Seperater = null;
+            }
+
+            if(SecondSeperater != null)
+            {
+                SecondSeperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
+                SecondSeperater = null;
+            }
+
             IsUseDefaultSeperateWidth = true;
         }
 
@@ -437,6 +449,7 @@ namespace KKPageDemo.Controls
                     // 跑位移動畫
 
                     result = await PageViewAnimation(KKNavigationMode.Forward);
+                    RootContainer.Children.Remove(ThirdPage);
                 }
 
                 UpdateSeperateVisibility();
@@ -487,11 +500,15 @@ namespace KKPageDemo.Controls
             try
             {
                 Storyboard storyboard = new Storyboard();
-                storyboard.Completed += (o, e) =>
+                EventHandler<object> storyboardCompleted = null;
+                storyboardCompleted = (o, e) =>
                 {
+                    storyboard.Completed -= storyboardCompleted;
                     CanNavigate = true;
                     tcs.TrySetResult(true);
                 };
+
+                storyboard.Completed += storyboardCompleted;
 
                 DoubleAnimation moveThirdPage = new DoubleAnimation()
                 {
@@ -599,7 +616,7 @@ namespace KKPageDemo.Controls
         /// <returns>true: 成功</returns>
         public async Task<bool> GoBack()
         {
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            bool result = false;
 
             if (CanNavigate && PrimaryPage != null && SecondaryPage != null)
             {
@@ -616,28 +633,31 @@ namespace KKPageDemo.Controls
 
                     PrimaryPage.Width = PrimaryPageWidth;
                     PrimaryPage.Height = ActualHeight;
+
+                    UpdateSeperateVisibility();
+
+                    result = true;
                 }
                 else
                 {
-                    PageViewAnimation(KKNavigationMode.Back).ContinueWith(t =>
+                    if (RootContainer.Children.Contains(ThirdPage) == false)
                     {
-                        Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                        {
-                            RootContainer.Children.Remove(PrimaryPage);
-                            Pages.Remove(PrimaryPage);
-                            CanNavigate = true;
-                            UpdateSeperateVisibility();
-                            tcs.TrySetResult(true);
-                        });
-                    });
+                        RootContainer.Children.Add(ThirdPage);
+                    }
+
+                    await PageViewAnimation(KKNavigationMode.Back);
+
+                    RootContainer.Children.Remove(PrimaryPage);
+                    Pages.Remove(PrimaryPage);
+                    PrimaryPage.DataContext = null;
+                    UpdateSeperateVisibility();
+                    CanNavigate = true;
+
+                    result = true;
                 }
             }
-            else
-            {
-                tcs.TrySetResult(false);
-            }
 
-            return await tcs.Task;
+            return result;
         }
 
         public bool SetPrimaryPageWidth(double targetWidth)
@@ -690,6 +710,7 @@ namespace KKPageDemo.Controls
                 else if (needShowSeperater == false && isSeperateContainsInRootContainer)
                 {
                     // 已經被加到視覺樹且應該要移除
+                    Seperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
                     RootContainer.Children.Remove(Seperater);
                 }
             }

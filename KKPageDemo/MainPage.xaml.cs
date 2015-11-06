@@ -1,21 +1,10 @@
 ﻿using KKPageDemo.Controls;
 using KKPageDemo.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 
 namespace KKPageDemo
@@ -29,59 +18,78 @@ namespace KKPageDemo
             this.Loaded += MainPage_Loaded;
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+            #region Memory test
+            for (int i = 0; i < 100; i++)
             {
-                BackgroundColor = Colors.Yellow
-            }, false);
-
-            Task.Delay(TimeSpan.FromSeconds(4)).ContinueWith(t =>
-            {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+                await MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
                 {
-                    BackgroundColor = Colors.Red
-                }, false));
-            });
+                    BackgroundColor = Colors.Yellow
+                }, false);
+            }
 
-            Task.Delay(TimeSpan.FromSeconds(2)).ContinueWith(t =>
+            for (int i = 0; i < 100; i++)
             {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    MainKKPageView.SetPrimaryPageWidth(470);
+                await MainKKPageView.GoBack();
+            }
 
-                    MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
-                    {
-                        BackgroundColor = Colors.Green
-                    }, false);
-                });
-            });
+            MainKKPageView.ClearHistory();
 
-            Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith(t =>
-            {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
-                {
-                    BackgroundColor = Colors.Blue
-                }, false));
-            });
+            GC.Collect();
+            #endregion
 
-            Task.Delay(TimeSpan.FromSeconds(8)).ContinueWith(t =>
-            {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.GoBack());
-            });
+            //MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+            //{
+            //    BackgroundColor = Colors.Yellow
+            //}, false);
 
-            Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(t =>
-            {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.GoBack());
-            });
+            //Task.Delay(TimeSpan.FromSeconds(4)).ContinueWith(t =>
+            //{
+            //    Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+            //    {
+            //        BackgroundColor = Colors.Red
+            //    }, false));
+            //});
 
-            Task.Delay(TimeSpan.FromSeconds(12)).ContinueWith(t =>
-            {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
-                {
-                    BackgroundColor = Colors.Brown
-                }, true));
-            });
+            //Task.Delay(TimeSpan.FromSeconds(2)).ContinueWith(t =>
+            //{
+            //    Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            //    {
+            //        MainKKPageView.SetPrimaryPageWidth(470);
+
+            //        MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+            //        {
+            //            BackgroundColor = Colors.Green
+            //        }, false);
+            //    });
+            //});
+
+            //Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith(t =>
+            //{
+            //    Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+            //    {
+            //        BackgroundColor = Colors.Blue
+            //    }, false));
+            //});
+
+            //Task.Delay(TimeSpan.FromSeconds(8)).ContinueWith(t =>
+            //{
+            //    Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.GoBack());
+            //});
+
+            //Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(t =>
+            //{
+            //    Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.GoBack());
+            //});
+
+            //Task.Delay(TimeSpan.FromSeconds(12)).ContinueWith(t =>
+            //{
+            //    Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => MainKKPageView.NavigateTo<DemoPage1>(null, new FakeSongNameListViewModel()
+            //    {
+            //        BackgroundColor = Colors.Brown
+            //    }, true));
+            //});
         }
     }
 }
