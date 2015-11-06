@@ -2,11 +2,11 @@
 
 namespace KKPageDemo.Controls
 {
-    public class KKPage : ContentControl
+    public class KKPageBase : ContentControl
     {
-        public KKPage()
+        public KKPageBase()
         {
-            this.DefaultStyleKey = typeof(KKPage);
+            this.DefaultStyleKey = typeof(KKPageBase);
         }
 
         public string Header { get; set; } = string.Empty;

@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace KKPageDemo.Controls
 {
-    public partial class DemoPage1 : KKPage
+    public partial class DemoPage1 : KKPageBase
     {
         // 假設是 ListView 樣式的頁面
 

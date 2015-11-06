@@ -7,10 +7,10 @@
     RequestedTheme="Light">
 
     <Application.Resources>
-        <Style TargetType="control:KKPage">
+        <Style TargetType="control:KKPageBase">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="control:KKPage">
+                    <ControlTemplate TargetType="control:KKPageBase">
                         <ContentPresenter/>
                     </ControlTemplate>
                 </Setter.Value>

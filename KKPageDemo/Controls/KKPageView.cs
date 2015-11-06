@@ -27,11 +27,11 @@ namespace KKPageDemo.Controls
         /// <summary>
         /// 最後一個人
         /// </summary>
-        public KKPage PrimaryPage
+        public KKPageBase PrimaryPage
         {
             get
             {
-                KKPage result = null;
+                KKPageBase result = null;
 
                 if (Pages.Count >= 1)
                 {
@@ -45,11 +45,11 @@ namespace KKPageDemo.Controls
         /// <summary>
         /// 倒數第二個人
         /// </summary>
-        public KKPage SecondaryPage
+        public KKPageBase SecondaryPage
         {
             get
             {
-                KKPage result = null;
+                KKPageBase result = null;
 
                 if (Pages.Count >= 2)
                 {
@@ -63,11 +63,11 @@ namespace KKPageDemo.Controls
         /// <summary>
         /// 倒數第三個人
         /// </summary>
-        public KKPage ThirdPage
+        public KKPageBase ThirdPage
         {
             get
             {
-                KKPage result = null;
+                KKPageBase result = null;
 
                 if (Pages.Count >= 3)
                 {
@@ -174,7 +174,7 @@ namespace KKPageDemo.Controls
 
         public bool CanNavigate { get; private set; } = true;
 
-        public List<KKPage> Pages { get; private set; } = new List<KKPage>();
+        public List<KKPageBase> Pages { get; private set; } = new List<KKPageBase>();
 
         private Canvas RootContainer { get; set; }
 
@@ -323,8 +323,8 @@ namespace KKPageDemo.Controls
         /// <param name="parameter">頁面參數</param>
         /// <param name="isClearHistory">是否要清除歷史紀錄</param>
         /// <returns>true: 成功</returns>
-        public async Task<bool> NavigateTo<TKKPage>(KKPage from = null, object parameter = null, bool isClearHistory = false)
-            where TKKPage : KKPage, new()
+        public async Task<bool> NavigateTo<TKKPage>(KKPageBase from = null, object parameter = null, bool isClearHistory = false)
+            where TKKPage : KKPageBase, new()
         {
             bool result = false;
 
@@ -393,7 +393,7 @@ namespace KKPageDemo.Controls
         /// <param name="parameter"></param>
         /// <returns>true: 成功</returns>
         private async Task<bool> AddPage<TKKPage>(object parameter)
-            where TKKPage : KKPage, new()
+            where TKKPage : KKPageBase, new()
         {
             bool result = false;
 
@@ -467,7 +467,7 @@ namespace KKPageDemo.Controls
         /// <param name="parameter"></param>
         /// <returns>true: 成功</returns>
         private async Task<bool> UpdatePage<TKKPage>(object parameter)
-            where TKKPage : KKPage, new()
+            where TKKPage : KKPageBase, new()
         {
             CanNavigate = false;
             bool result = false;
