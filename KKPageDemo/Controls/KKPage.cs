@@ -2,7 +2,7 @@
 
 namespace KKPageDemo.Controls
 {
-    public abstract class KKPage : Control
+    public class KKPage : ContentControl
     {
         public KKPage()
         {

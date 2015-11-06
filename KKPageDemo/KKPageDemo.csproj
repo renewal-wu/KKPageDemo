@@ -99,7 +99,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DemoPage1.cs" />
+    <Compile Include="Controls\DemoPage1.cs">
+      <DependentUpon>DemoPage1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\KKNavigationMode.cs" />
     <Compile Include="Controls\KKPage.cs" />
     <Compile Include="Controls\KKPageView.cs" />
@@ -131,6 +133,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\DemoPage1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -16,11 +16,5 @@ namespace KKPageDemo.ViewModels
                 Items.Add(i.ToString());
             }
         }
-
-        ~FakeSongNameListViewModel()
-        {
-            Items.Clear();
-            Items = null;
-        }
     }
 }

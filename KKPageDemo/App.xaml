@@ -7,37 +7,21 @@
     RequestedTheme="Light">
 
     <Application.Resources>
+        <Style TargetType="control:KKPage">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="control:KKPage">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
         <Style TargetType="control:KKPageView">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="control:KKPageView">
                         <Canvas x:Name="RootContainer" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="control:DemoPage1">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="control:DemoPage1">
-                        <ListView ItemsSource="{Binding Items}">
-                            <ListView.Background>
-                                <SolidColorBrush Color="{Binding BackgroundColor}"/>
-                            </ListView.Background>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <TextBlock Text="{Binding}" FontSize="30" Foreground="Black"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                        </ListView>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
