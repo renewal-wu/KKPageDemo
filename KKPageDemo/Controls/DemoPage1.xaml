@@ -7,21 +7,24 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ListView ItemsSource="{x:Bind ViewModel.Items}">
-        <ListView.Background>
-            <SolidColorBrush Color="{x:Bind ViewModel.BackgroundColor}"/>
-        </ListView.Background>
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <TextBlock Text="{Binding}" FontSize="30" Foreground="Black"/>
-                </Grid>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-        <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            </Style>
-        </ListView.ItemContainerStyle>
-    </ListView>
+    <Grid>
+        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Items}" ItemClick="{x:Bind ViewModel.OnItemClick}" IsItemClickEnabled="True" SelectionMode="None">
+            <ListView.Background>
+                <SolidColorBrush Color="{x:Bind ViewModel.BackgroundColor}"/>
+            </ListView.Background>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBlock Text="{Binding}" FontSize="30" Foreground="Black"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+
 </local:KKPageBase>

@@ -20,6 +20,12 @@ namespace KKPageDemo.Controls
 
         private readonly int PageAnimationDuration = 100;
 
+        public static KKPageView CurrentKKPageView { get; set; }
+
+        public event EventHandler KKPageNavigated;
+
+        public event EventHandler<bool> BackEnableChanged;
+
         public int FrameCounts { get; set; } = 3;
 
         public int NavigationCache { get; set; } = 2;
@@ -78,14 +84,6 @@ namespace KKPageDemo.Controls
             }
         }
 
-        public double SeperaterWidthHalf
-        {
-            get
-            {
-                return SeperaterWidth / 2;
-            }
-        }
-
         public double HalfActualWidth
         {
             get
@@ -98,7 +96,7 @@ namespace KKPageDemo.Controls
         {
             get
             {
-                return this.ActualWidth > 700;
+                return this.ActualWidth >= 640;
             }
         }
 
@@ -120,7 +118,7 @@ namespace KKPageDemo.Controls
                     return ActualWidth;
                 }
 
-                return IsUseDefaultSeperateWidth ? HalfActualWidth - SeperaterWidthHalf : primaryPageWidth - SeperaterWidthHalf;
+                return IsUseDefaultSeperateWidth ? HalfActualWidth : primaryPageWidth;
             }
             set
             {
@@ -138,7 +136,7 @@ namespace KKPageDemo.Controls
                     return ActualWidth;
                 }
 
-                return IsUseDefaultSeperateWidth ? HalfActualWidth - SeperaterWidthHalf : secondaryPageWidth - SeperaterWidthHalf;
+                return IsUseDefaultSeperateWidth ? HalfActualWidth : secondaryPageWidth;
             }
             set
             {
@@ -150,7 +148,7 @@ namespace KKPageDemo.Controls
         {
             get
             {
-                return IsSeperateMode && SecondaryPage != null ? SecondaryPageWidth + SeperaterWidth : 0;
+                return IsSeperateMode && SecondaryPage != null ? SecondaryPageWidth : 0;
             }
         }
 
@@ -186,6 +184,7 @@ namespace KKPageDemo.Controls
         {
             this.DefaultStyleKey = typeof(KKPageView);
             this.SizeChanged += KKPageView_SizeChanged;
+            CurrentKKPageView = this;
         }
 
         protected override void OnApplyTemplate()
@@ -201,7 +200,7 @@ namespace KKPageDemo.Controls
             {
                 Width = SeperaterWidth,
                 Height = ActualHeight,
-                Background = new SolidColorBrush(Colors.Black),
+                Background = new SolidColorBrush(Colors.Black) { Opacity = 0.5 },
                 Visibility = Windows.UI.Xaml.Visibility.Collapsed
             };
 
@@ -223,7 +222,7 @@ namespace KKPageDemo.Controls
 
         private void NewSeperater_SeperaterPositionChanged(object sender, double e)
         {
-            SetPrimaryPageWidth(PrimaryPageWidth - e + SeperaterWidthHalf);
+            SetPrimaryPageWidth(PrimaryPageWidth - e);
         }
 
         private void KKPageView_SizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
@@ -237,6 +236,7 @@ namespace KKPageDemo.Controls
             UpdatePagesWidth();
             UpdatePagesHeight();
             UpdateSeperateVisibility();
+            CheckBackEnable();
         }
 
         private void UpdateSeperateSize()
@@ -257,12 +257,12 @@ namespace KKPageDemo.Controls
                 else if (newPrimaryPageWidth > newSecondaryPageWidth)
                 {
                     SecondaryPageWidth = Math.Max(newSecondaryPageWidth, 320);
-                    PrimaryPageWidth = ActualWidth - SeperaterWidthHalf - SecondaryPageWidth;
+                    PrimaryPageWidth = ActualWidth - newSecondaryPageWidth;
                 }
                 else
                 {
                     PrimaryPageWidth = Math.Max(newPrimaryPageWidth, 320);
-                    SecondaryPageWidth = ActualWidth - SeperaterWidthHalf - PrimaryPageWidth;
+                    SecondaryPageWidth = ActualWidth - newPrimaryPageWidth;
                 }
             }
         }
@@ -323,7 +323,7 @@ namespace KKPageDemo.Controls
         /// <param name="parameter">頁面參數</param>
         /// <param name="isClearHistory">是否要清除歷史紀錄</param>
         /// <returns>true: 成功</returns>
-        public async Task<bool> NavigateTo<TKKPage>(KKPageBase from = null, object parameter = null, bool isClearHistory = false)
+        public async Task<bool> NavigateTo<TKKPage>(object from = null, object parameter = null, bool isClearHistory = false)
             where TKKPage : KKPageBase, new()
         {
             bool result = false;
@@ -343,7 +343,7 @@ namespace KKPageDemo.Controls
                 else if (PrimaryPage != null && SecondaryPage != null)
                 {
                     // 目前已經有 primary, Secondary
-                    if (from == SecondaryPage)
+                    if (from == SecondaryPage || from == SecondaryPage.DataContext)
                     {
                         // 此 Navigation 來自 Secondary
                         result = await UpdatePage<TKKPage>(parameter);
@@ -368,6 +368,7 @@ namespace KKPageDemo.Controls
         /// </summary>
         public void ClearHistory()
         {
+            Pages.ForEach(page => page.DataContext = null);
             RootContainer.Children.Clear();
             Pages.Clear();
 
@@ -377,7 +378,7 @@ namespace KKPageDemo.Controls
                 Seperater = null;
             }
 
-            if(SecondSeperater != null)
+            if (SecondSeperater != null)
             {
                 SecondSeperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
                 SecondSeperater = null;
@@ -392,7 +393,7 @@ namespace KKPageDemo.Controls
         /// <typeparam name="TKKPage"></typeparam>
         /// <param name="parameter"></param>
         /// <returns>true: 成功</returns>
-        private async Task<bool> AddPage<TKKPage>(object parameter)
+        private async Task<bool> AddPage<TKKPage>(object parameter, bool onlyUpdateSecondaryPage = false)
             where TKKPage : KKPageBase, new()
         {
             bool result = false;
@@ -417,7 +418,7 @@ namespace KKPageDemo.Controls
 
                     result = true;
                 }
-                else if (SecondaryPage != null && ThirdPage == null)
+                else if (onlyUpdateSecondaryPage == true || (SecondaryPage != null && ThirdPage == null))
                 {
                     Canvas.SetTop(newPage, 0);
                     Canvas.SetLeft(newPage, PrimaryPageSeperatePosition);
@@ -454,6 +455,10 @@ namespace KKPageDemo.Controls
 
                 UpdateSeperateVisibility();
 
+                CheckBackEnable();
+
+                NotifyKKPageNavigated();
+
                 CanNavigate = true;
             }
 
@@ -476,11 +481,12 @@ namespace KKPageDemo.Controls
             {
                 if (PrimaryPage != null)
                 {
+                    PrimaryPage.DataContext = null;
                     RootContainer.Children.Remove(PrimaryPage);
                     Pages.Remove(PrimaryPage);
                 }
 
-                result = await AddPage<TKKPage>(parameter);
+                result = await AddPage<TKKPage>(parameter, true);
             }
 
             CanNavigate = true;
@@ -624,6 +630,7 @@ namespace KKPageDemo.Controls
 
                 if (ThirdPage == null)
                 {
+                    PrimaryPage.DataContext = null;
                     RootContainer.Children.Remove(PrimaryPage);
                     Pages.Remove(PrimaryPage);
 
@@ -647,14 +654,19 @@ namespace KKPageDemo.Controls
 
                     await PageViewAnimation(KKNavigationMode.Back);
 
+                    PrimaryPage.DataContext = null;
                     RootContainer.Children.Remove(PrimaryPage);
                     Pages.Remove(PrimaryPage);
-                    PrimaryPage.DataContext = null;
                     UpdateSeperateVisibility();
-                    CanNavigate = true;
 
                     result = true;
                 }
+
+                CheckBackEnable();
+
+                NotifyKKPageNavigated();
+
+                CanNavigate = true;
             }
 
             return result;
@@ -665,7 +677,7 @@ namespace KKPageDemo.Controls
             bool result = false;
             double diffWidth = ActualWidth - targetWidth;
 
-            if (targetWidth >= (320 + SeperaterWidthHalf) && diffWidth >= (320 + SeperaterWidthHalf))
+            if (targetWidth >= 320 && diffWidth >= 320)
             {
                 // 主畫面和副畫面都要大於 320
                 IsUseDefaultSeperateWidth = false;
@@ -686,6 +698,7 @@ namespace KKPageDemo.Controls
                     Seperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
                     RootContainer.Children.Remove(Seperater);
                     Seperater = SecondSeperater;
+                    SecondSeperater = null;
                 }
 
                 bool isSeperateContainsInRootContainer = RootContainer.Children.Contains(Seperater);
@@ -699,7 +712,10 @@ namespace KKPageDemo.Controls
                     Canvas.SetZIndex(Seperater, 99);
 
                     Seperater.TranslateXLeftLimit = 320 - SecondaryPageWidth;
-                    Seperater.TranslateXRightLimit = ActualWidth - SecondaryPageWidth - SeperaterWidth - 320;
+                    Seperater.TranslateXRightLimit = ActualWidth - SecondaryPageWidth - 320;
+
+                    Seperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
+                    Seperater.SeperaterPositionChanged += NewSeperater_SeperaterPositionChanged;
                 }
 
                 if (needShowSeperater && isSeperateContainsInRootContainer == false)
@@ -713,6 +729,34 @@ namespace KKPageDemo.Controls
                     Seperater.SeperaterPositionChanged -= NewSeperater_SeperaterPositionChanged;
                     RootContainer.Children.Remove(Seperater);
                 }
+            }
+        }
+
+        private void CheckBackEnable()
+        {
+            if (IsSeperateMode)
+            {
+                NotifyBackEnableChanged(Pages.Count > 2);
+            }
+            else
+            {
+                NotifyBackEnableChanged(Pages.Count > 1);
+            }
+        }
+
+        private void NotifyBackEnableChanged(bool isEnable)
+        {
+            if (BackEnableChanged != null)
+            {
+                BackEnableChanged(this, isEnable);
+            }
+        }
+
+        private void NotifyKKPageNavigated()
+        {
+            if (KKPageNavigated != null)
+            {
+                KKPageNavigated(this, EventArgs.Empty);
             }
         }
     }

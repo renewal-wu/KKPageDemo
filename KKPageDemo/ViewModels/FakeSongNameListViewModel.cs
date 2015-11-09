@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using KKPageDemo.Controls;
+using System.Collections.Generic;
 using Windows.UI;
+using Windows.UI.Xaml.Controls;
 
 namespace KKPageDemo.ViewModels
 {
@@ -15,6 +17,14 @@ namespace KKPageDemo.ViewModels
             {
                 Items.Add(i.ToString());
             }
+        }
+
+        public async void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            await KKPageView.CurrentKKPageView.NavigateTo<DemoPage1>(this, new FakeSongNameListViewModel()
+            {
+                BackgroundColor = ColorHelper.GetRandomColor()
+            }, false);
         }
     }
 }

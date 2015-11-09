@@ -9,7 +9,16 @@
     mc:Ignorable="d">
 
     <Grid x:Name="RootContainer" Background="White">
-        <control:KKPageView x:Name="MainKKPageView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Button x:Name="BackButton" Content="GoBack" HorizontalAlignment="Left" VerticalAlignment="Center" Click="BackButton_Click"/>
+        </Grid>
+        <control:KKPageView Grid.Row="1" x:Name="MainKKPageView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" KKPageNavigated="MainKKPageView_KKPageNavigated" BackEnableChanged="MainKKPageView_BackEnableChanged">
             
         </control:KKPageView>
     </Grid>

@@ -99,11 +99,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ColorHelper.cs" />
     <Compile Include="Controls\DemoPage1.cs">
       <DependentUpon>DemoPage1.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\KKNavigationMode.cs" />
-    <Compile Include="Controls\KKPage.cs" />
+    <Compile Include="Controls\KKPageBase.cs" />
     <Compile Include="Controls\KKPageView.cs" />
     <Compile Include="Controls\KKPageViewSeperater.cs" />
     <Compile Include="MainPage.xaml.cs">
